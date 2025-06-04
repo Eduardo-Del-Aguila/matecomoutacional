@@ -1,52 +1,66 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Histograma</title>
-    <script defer>
-        // Esta función añade contenido dinámico
-        function handleAction(action) {
-            const container = document.getElementById('contenido-dinamico');
-            container.innerHTML = ''; // Limpia el contenido previo
-
-            if (action === 'ecualizar') {
-                container.innerHTML = `
-                    <div class="mt-6 p-4 border rounded shadow">
-                        <h4 class="text-lg font-semibold mb-2">Resultado: Ecualización</h4>
-                        <p>Se ha generado el contenido necesario para ecualizar el histograma.</p>
-                        <!-- Aquí podrías llamar una función JS específica -->
-                    </div>
-                `;
-                // Aquí podrías insertar código JS específico, por ejemplo:
-                console.log('Ejecutando lógica de ecualización...');
-            } else if (action === 'expandir') {
-                container.innerHTML = `
-                    <div class="mt-6 p-4 border rounded shadow">
-                        <h4 class="text-lg font-semibold mb-2">Resultado: Expansión</h4>
-                        <p>Se ha generado el contenido necesario para expandir el histograma.</p>
-                    </div>
-                `;
-                console.log('Ejecutando lógica de expansión...');
-            }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="aniadido.js" ></script>
+    <title>Ecualización de Imágenes</title>
+    <style>
+        canvas {
+            max-width: 500px;
+            margin: 20px auto;
+            display: block;
+            background-color: rgb(223, 223, 255);
         }
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
-    <div class="text-center mb-4">
-        <h3 class="text-xl font-semibold">Selecciona la opción que desea</h3>
-    </div>
-    <div class="flex flex-row gap-4 mb-6">
-        <button onclick="handleAction('ecualizar')" class="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition">
-            Ecualizar Histograma
-        </button>
-        <button onclick="handleAction('expandir')" class="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition">
-            Expandir Histograma
-        </button>
-    </div>
+<body class="bg-gray-400 font-mono">
+        <main class="flex flex-col items-center justify-center m-5">
+        <section class="flex flex-row items-center justify-center w-full mx-10">
+            <div class="flex flex-col m-4 p-3 top-0">
+                <h1 class="text-3xl font-bold mb-4">Ecualización de Imágenes</h1>
+                <p class="text-lg mb-4">Sube una imagen para analizar píxel por píxel</p>
+                <input
+                    class="flex-col hover:bg-red-400 border rounded-3xl p-2 focus:bg-red-100"
+                    type="file"
+                    id="imagen"
+                    accept="image/*"
+                />
+            </div>
+
+            <div class="flex flex-col items-center w-full">
+                <h2 class="text-2xl font-bold mb-4">Imagen Blanco y Negro</h2>
+                <canvas id="imagenOriginal"></canvas>
+                <h2 class="text-2xl font-bold mb-4">Histograma de la imagen Original</h2>
+                <canvas class="w-full" id="histogramaOriginal"></canvas>
+            </div>
+        </section>
+        <div class="flex flex-col items-center justify-center w-full">
+          
+        <div class="flex flex-col items-center justify-center w-full p-4">
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-center">
+                    Selecciona la opción que desea
+                </h3>
+            </div>
+            <div class="flex flex-row gap-4 mb-6">
+                <button onclick="handleAction('ecualizar')" class="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition" id="Ecualizar">
+                    Ecualizar Histograma
+                </button>
+                <button onclick="handleAction('expandir')" class="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition" id="Expandir">
+                    Expandir Histograma
+                </button>
+            </div>
+        </div>
+        
+        <div id="contenido-dinamico" class="w-full max-w-xl"></div>
+
+    </main>
     
-    <!-- Contenedor donde se insertará el contenido dinámico -->
-    <div id="contenido-dinamico" class="w-full max-w-xl"></div>
+
+    <script src="prueba.js"></script>
 </body>
 </html>
+
+
