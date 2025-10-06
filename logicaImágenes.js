@@ -1,12 +1,8 @@
 
-//Variables globales
 
 const img = new Image();
 const lector = new FileReader();
 
-
-
-// Elementos del DOM (canvas, botones, etc.)
 const inputImagen = document.querySelector("#imagen");
 const canvas = document.querySelector("#imagenOriginal");
 const ctx = canvas.getContext("2d")
@@ -21,32 +17,26 @@ const Expandir = document.querySelector("#Expandir");
 
 
 
-//Ecualizacion
 Ecualizar.addEventListener("click", () => {
     handleAction('ecualizar');
-    // Imagen
     const canvasEcualizar = document.getElementById('ecualizacion');
     const ctxEcualizar = canvasEcualizar.getContext('2d')
 
     const canvasHistEcualizado = document.getElementById('histogramaEcualizado');
     const ctxHistEcualizado = canvasHistEcualizado.getContext('2d');
-    // Obtener los datos de la imagen original
     canvasEcualizar.width = img.width;
     canvasEcualizar.height = img.height;
     canvasHistEcualizado.width = 256;
     canvasHistEcualizado.height = 200;
 
-    //funcion Ecualizacion
     const resultado = Ecualización(imagenRGB)
     const histogramaEcualizado = calcularHistograma(resultado)
 
-    //Pintado de histograma Ecualizado
     dibujarHistograma(histogramaEcualizado,canvasHistEcualizado,ctxHistEcualizado)
     
     const imgData = ctxEcualizar.createImageData(canvasEcualizar.width,canvasEcualizar.height)
     const data = imgData.data
 
-    //Pintado de imagen Ecualizada
     for (let i = 0; i <resultado.length; i++) {
         const gris =resultado[i];
         const j    = i * 4;
@@ -61,10 +51,6 @@ Ecualizar.addEventListener("click", () => {
 
 })
 
-
-
-
-//Expanción
 Expandir.addEventListener("click", () => {
     handleAction('expandir');
     const canvasExpandir = document.getElementById("expancion");
@@ -99,8 +85,6 @@ Expandir.addEventListener("click", () => {
 
 })
 
-
-//CARGAR IMAGEN
 inputImagen.addEventListener("change", event => {
     const archivoInicial = event.target.files[0];
     lector.onload = (e) => {
@@ -109,16 +93,12 @@ inputImagen.addEventListener("change", event => {
             canvas.height = img.height;
             canvasHist.width = 256; 
             canvasHist.height = 200;
-            //dibjamos la imagen
             ctx.drawImage(img, 0, 0);
-            //obtenemos los datos de la imagen
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            //convertimos a blanco y negro la imagen pasamos de RGBA a grises
             const newImg = convertirABlancoYNegro(imgData);
             ctx.putImageData(imgData, 0, 0);
             imagenRGB = newImg;
             img.data = imagenRGB;
-            //calculamos hitograma y lo pintamos
             const histograma = calcularHistograma(newImg);
             dibujarHistograma(histograma, canvasHist, ctxHist);
         };
@@ -127,8 +107,6 @@ inputImagen.addEventListener("change", event => {
     lector.readAsDataURL(archivoInicial);
 })
 
-
-// Convertimnos a blanco en niveles RGBA
 const convertirABlancoYNegro = (imgData) => {
     miImagen = [];
     for(let i = 0; i < imgData.data.length; i += 4) {
@@ -148,16 +126,13 @@ const convertirABlancoYNegro = (imgData) => {
     return miImagen;
 }
 
-//Hitogramna Imagen Original
 const Ecualización = (newImg) => {
-    //cantidades por cada nivel
     const cantidades = new Array(256).fill(0);
     for (let i = 0; i < newImg.length; i++) {
         const valor = newImg[i];
         cantidades[valor]++;
     }
 
-    //niveles de colores existentes
     const unicos = [...new Set(newImg)].sort((a, b) => a - b);
     const acumulado = new Array(256).fill(0);
     let suma = 0;
@@ -165,8 +140,6 @@ const Ecualización = (newImg) => {
         suma += cantidades[v];
         acumulado[v] = suma;
     }
-
-    //definimos constantes de la formula
     const cdfMin = acumulado.find(c => c > 0);
     const total = newImg.length; 
     const L = 256;              
@@ -174,7 +147,6 @@ const Ecualización = (newImg) => {
 
     for (const v of unicos) {
         const cdfV = acumulado[v];
-        //Formula del video para ecualizar(es necesaria ya que estamos trabajando en niveles de 255)
         const nuevo = Math.round( (cdfV - cdfMin) / (total - cdfMin) * (L - 1) );
         h[v] = nuevo;
     }
@@ -187,7 +159,6 @@ const Ecualización = (newImg) => {
     return salida;
 }
 
-//Expansion
 const Expansion = (newImg) => {
     const valores = [...new Set(newImg)];
     const max = Math.max(...valores);
@@ -222,7 +193,6 @@ const Expansion = (newImg) => {
 
 }
 
-//Caluclo de histogramas y dibujado en el canvas
 const calcularHistograma = (newImg) => {
     const histograma = new Array(256).fill(0);
     for (let i = 0; i < newImg.length; i++) {
@@ -256,7 +226,6 @@ const dibujarHistograma = (histograma, canvas, ctx) => {
 let imagenRGB = [];
 
 
-// Maneja las acciones de los botones añadiendo contenido
 function handleAction(action) {
     const container = document.getElementById('contenido-dinamico');
     container.innerHTML = '';
@@ -268,9 +237,9 @@ function handleAction(action) {
                 <p>Se ha generado el contenido necesario para ecualizar el histograma.</p>
             </div>
             <div class="flex flex-col items-center w-full gap-4">
-                <div class="flex flex-row items-stretch w-full gap-4">
-                    <canvas id="ecualizacion"></canvas>
-                    <canvas id="histogramaEcualizado"></canvas>
+                <div class="flex flex-col md:flex-row items-stretch w-full gap-3">
+                    <canvas id="ecualizacion" class="w-full p-2 rounded-2xl border mt-3"></canvas>
+                    <canvas id="histogramaEcualizado" class="w-full p-2" ></canvas>
                 </div>
                 <button 
                     class="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition" 
@@ -287,9 +256,9 @@ function handleAction(action) {
                 <p>Se ha generado el contenido necesario para expandir el histograma.</p>
             </div>
             <div class="flex flex-col items-center w-full gap-4">
-                <div class="flex flex-row items-stretch w-full gap-4">
-                    <canvas id="expancion"></canvas>
-                    <canvas id="histogramaExpandido"></canvas>
+                <div class="flex flex-col md:flex-row items-stretch w-full gap-4">
+                    <canvas id="expancion" class="w-full p-2 rounded-2xl border mt-3"></canvas>
+                    <canvas id="histogramaExpandido" class="w-full p-2" ></canvas>
                 </div>
                 <button 
                     class="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition" 
